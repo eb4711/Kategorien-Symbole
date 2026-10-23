@@ -1,0 +1,1058 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+  <title>Kategorien zuordnen</title>
+
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
+
+  <style>
+    html,
+    body {
+      margin: 0;
+      padding: 0;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      background: linear-gradient(135deg, #d9f99d 0%, #86efac 48%, #22c55e 100%);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif;
+      user-select: none;
+      -webkit-user-select: none;
+      -webkit-touch-callout: none;
+      touch-action: manipulation;
+    }
+
+    * {
+      box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    button {
+      font-family: inherit;
+      cursor: pointer;
+      border: none;
+      touch-action: manipulation;
+    }
+
+    #app {
+      width: 100vw;
+      height: 100vh;
+      height: 100dvh;
+      overflow: hidden;
+      color: white;
+      background: linear-gradient(135deg, #d9f99d 0%, #86efac 48%, #22c55e 100%);
+    }
+
+    .app-bg {
+      background: linear-gradient(135deg, #d9f99d 0%, #86efac 48%, #22c55e 100%);
+    }
+
+    .center-screen {
+      width: 100%;
+      height: 100vh;
+      height: 100dvh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+    }
+
+    .panel {
+      width: 100%;
+      max-width: 820px;
+      border-radius: 36px;
+      padding: 36px 28px;
+      text-align: center;
+      background: rgba(15, 23, 42, 0.26);
+      border: 5px solid #fbbf24;
+      box-shadow: 0 24px 60px rgba(0, 0, 0, 0.28);
+      animation: popIn 0.35s ease-out;
+      backdrop-filter: blur(6px);
+    }
+
+    .panel.end {
+      border-color: #bef264;
+    }
+
+    @keyframes popIn {
+      from {
+        opacity: 0;
+        transform: scale(0.92);
+      }
+
+      to {
+        opacity: 1;
+        transform: scale(1);
+      }
+    }
+
+    .big-icon {
+      font-size: 72px;
+      line-height: 1;
+      margin-bottom: 14px;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: clamp(38px, 7vw, 64px);
+      line-height: 1.05;
+      font-weight: 900;
+      color: #ffffff;
+      text-shadow: 0 4px 12px rgba(0, 0, 0, 0.48);
+    }
+
+    .subtitle {
+      margin: 22px 0 0;
+      font-size: clamp(22px, 4vw, 34px);
+      font-weight: 800;
+      line-height: 1.25;
+      color: white;
+      text-shadow: 0 3px 8px rgba(0, 0, 0, 0.35);
+    }
+
+    .primary-btn,
+    .secondary-btn {
+      margin-top: 34px;
+      padding: 20px 34px;
+      border-radius: 999px;
+      font-size: clamp(24px, 4vw, 34px);
+      font-weight: 900;
+      border: 5px solid white;
+      box-shadow: 0 14px 30px rgba(0, 0, 0, 0.28);
+      transition: transform 0.12s ease;
+    }
+
+    .primary-btn {
+      background: #facc15;
+      color: #0f172a;
+    }
+
+    .secondary-btn {
+      background: #fb923c;
+      color: #0f172a;
+    }
+
+    .primary-btn:active,
+    .secondary-btn:active,
+    .round-btn:active,
+    .read-btn:active,
+    .game-card:active {
+      transform: scale(0.96);
+    }
+
+    .game-screen {
+      position: relative;
+      width: 100%;
+      height: 100vh;
+      height: 100dvh;
+      overflow: hidden;
+      background: linear-gradient(135deg, #d9f99d 0%, #86efac 48%, #22c55e 100%);
+    }
+
+    .header {
+      position: absolute;
+      z-index: 20;
+      top: 0;
+      left: 0;
+      right: 0;
+      padding: 12px 18px 0;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .round-btn {
+      width: 64px;
+      height: 64px;
+      border-radius: 999px;
+      background: rgba(15, 23, 42, 0.28);
+      border: 5px solid #fbbf24;
+      color: white;
+      font-size: 34px;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.30);
+      transition: transform 0.12s ease;
+    }
+
+    .progress {
+      padding: 12px 24px;
+      border-radius: 999px;
+      background: rgba(15, 23, 42, 0.28);
+      border: 5px solid #fbbf24;
+      color: #ffffff;
+      font-size: clamp(18px, 3vw, 28px);
+      font-weight: 900;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.30);
+      white-space: nowrap;
+      text-shadow: 0 3px 8px rgba(0, 0, 0, 0.35);
+    }
+
+    .game-content {
+      width: 100%;
+      height: 100%;
+      padding: 98px 18px 22px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+
+    .question-row {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 14px;
+      margin-bottom: 22px;
+    }
+
+    .question {
+      margin: 0;
+      color: white;
+      font-size: clamp(34px, 6vw, 66px);
+      font-weight: 900;
+      text-align: center;
+      text-shadow: 0 4px 12px rgba(0, 0, 0, 0.52);
+    }
+
+    .read-btn {
+      width: 66px;
+      height: 66px;
+      flex: 0 0 auto;
+      border-radius: 999px;
+      background: #fb923c;
+      color: white;
+      border: 5px solid white;
+      font-size: 34px;
+      box-shadow: 0 10px 24px rgba(0, 0, 0, 0.30);
+      transition: transform 0.12s ease;
+    }
+
+    .cards-grid {
+      width: 100%;
+      max-width: 1180px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: clamp(10px, 2.2vw, 28px);
+    }
+
+    .game-card {
+      position: relative;
+      aspect-ratio: 1 / 1;
+      border-radius: 30px;
+      overflow: hidden;
+      border: 8px solid #fbbf24;
+      background: white;
+      box-shadow: 0 18px 36px rgba(0, 0, 0, 0.42);
+      transition:
+        transform 0.16s ease,
+        border-color 0.12s ease,
+        box-shadow 0.16s ease;
+    }
+
+    .card-img {
+      display: block;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      pointer-events: none;
+      background: white;
+    }
+
+    .correct-card {
+      border-color: #22c55e !important;
+      transform: scale(1.04);
+      box-shadow: 0 0 34px rgba(34, 197, 94, 0.95);
+    }
+
+    .wrong-card {
+      border-color: #ef4444 !important;
+      animation: shake 0.42s ease-in-out;
+      box-shadow: 0 0 30px rgba(239, 68, 68, 0.9);
+    }
+
+    @keyframes shake {
+      0% { transform: translateX(0); }
+      15% { transform: translateX(-12px); }
+      30% { transform: translateX(12px); }
+      45% { transform: translateX(-10px); }
+      60% { transform: translateX(10px); }
+      75% { transform: translateX(-5px); }
+      100% { transform: translateX(0); }
+    }
+
+    .end-buttons {
+      margin-top: 34px;
+      display: flex;
+      justify-content: center;
+      gap: 18px;
+      flex-wrap: wrap;
+    }
+
+    .end-buttons .primary-btn,
+    .end-buttons .secondary-btn {
+      margin-top: 0;
+      font-size: clamp(22px, 3.4vw, 30px);
+    }
+
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      z-index: 100;
+      padding: 22px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(0, 0, 0, 0.58);
+      backdrop-filter: blur(8px);
+    }
+
+    .modal {
+      width: 100%;
+      max-width: 560px;
+      padding: 30px;
+      border-radius: 34px;
+      background: white;
+      color: #0f172a;
+      text-align: center;
+      border: 5px solid #fbbf24;
+      box-shadow: 0 24px 60px rgba(0, 0, 0, 0.5);
+      animation: popIn 0.25s ease-out;
+    }
+
+    .modal h2 {
+      margin: 0;
+      font-size: clamp(32px, 5vw, 46px);
+      font-weight: 900;
+    }
+
+    .modal p {
+      margin: 14px 0 0;
+      font-size: 22px;
+      font-weight: 800;
+      color: #475569;
+    }
+
+    .modal-buttons {
+      margin-top: 26px;
+      display: flex;
+      gap: 14px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    .modal-button {
+      padding: 16px 24px;
+      border-radius: 999px;
+      font-size: 22px;
+      font-weight: 900;
+      color: #0f172a;
+      border: 4px solid #0f172a;
+    }
+
+    .modal-button.continue {
+      background: #a3e635;
+    }
+
+    .modal-button.confirm {
+      background: #fcd34d;
+    }
+
+    @media (max-width: 700px) {
+      .game-content {
+        padding-top: 92px;
+      }
+
+      .round-btn {
+        width: 56px;
+        height: 56px;
+        font-size: 30px;
+      }
+
+      .progress {
+        font-size: 16px;
+        padding: 10px 14px;
+      }
+
+      .question-row {
+        margin-bottom: 14px;
+      }
+
+      .game-card {
+        border-width: 6px;
+        border-radius: 22px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div id="app">
+    <div class="center-screen">
+      <div class="panel">
+        <h1>Lade Spiel …</h1>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    (function () {
+      "use strict";
+
+      var TOTAL_TASKS = 6;
+      var app = document.getElementById("app");
+
+      var muted = false;
+      var currentRound = [];
+      var currentIndex = 0;
+      var currentCards = [];
+      var selectedVoice = null;
+      var audioCtx = null;
+      var advanceTimer = null;
+
+      var categories = [
+        {
+          id: "tier",
+          label: "Tier",
+          prompt: "Finde ein Tier!",
+          speak: "Finde ein Tier!",
+          items: [
+            { name: "Hund", emoji: "🐶" },
+            { name: "Katze", emoji: "🐱" },
+            { name: "Fisch", emoji: "🐟" }
+          ]
+        },
+        {
+          id: "obst",
+          label: "Obst",
+          prompt: "Finde Obst!",
+          speak: "Finde Obst!",
+          items: [
+            { name: "Apfel", emoji: "🍎" },
+            { name: "Banane", emoji: "🍌" },
+            { name: "Trauben", emoji: "🍇" }
+          ]
+        },
+        {
+          id: "fahrzeug",
+          label: "Fahrzeug",
+          prompt: "Finde ein Fahrzeug!",
+          speak: "Finde ein Fahrzeug!",
+          items: [
+            { name: "Auto", emoji: "🚗" },
+            { name: "Bus", emoji: "🚌" },
+            { name: "Zug", emoji: "🚆" }
+          ]
+        },
+        {
+          id: "kleidung",
+          label: "Kleidung",
+          prompt: "Finde Kleidung!",
+          speak: "Finde Kleidung!",
+          items: [
+            { name: "T-Shirt", emoji: "👕" },
+            { name: "Schuh", emoji: "👟" },
+            { name: "Hose", emoji: "👖" }
+          ]
+        },
+        {
+          id: "schulsache",
+          label: "Schulsache",
+          prompt: "Finde eine Schulsache!",
+          speak: "Finde eine Schul-Sache!",
+          items: [
+            { name: "Buch", emoji: "📘" },
+            { name: "Bleistift", emoji: "✏️" },
+            { name: "Schere", emoji: "✂️" }
+          ]
+        },
+        {
+          id: "mensch",
+          label: "Mensch",
+          prompt: "Finde einen Menschen!",
+          speak: "Finde einen Menschen!",
+          items: [
+            { name: "Kind", emoji: "🧒" },
+            { name: "Person", emoji: "🧑" },
+            { name: "Oma", emoji: "👵" }
+          ]
+        },
+        {
+          id: "musik",
+          label: "Musikinstrument",
+          prompt: "Finde ein Musikinstrument!",
+          speak: "Finde ein Musik-Instrument!",
+          items: [
+            { name: "Gitarre", emoji: "🎸" },
+            { name: "Trommel", emoji: "🥁" },
+            { name: "Trompete", emoji: "🎺" }
+          ]
+        },
+        {
+          id: "spielzeug",
+          label: "Spielzeug",
+          prompt: "Finde ein Spielzeug!",
+          speak: "Finde ein Spielzeug!",
+          items: [
+            { name: "Ball", emoji: "⚽" },
+            { name: "Würfel", emoji: "🎲" },
+            { name: "Jo-Jo", emoji: "🪀" }
+          ]
+        }
+      ];
+
+      function escapeHtml(text) {
+        return String(text)
+          .replace(/&/g, "&amp;")
+          .replace(/</g, "&lt;")
+          .replace(/>/g, "&gt;")
+          .replace(/"/g, "&quot;");
+      }
+
+      function shuffle(array) {
+        var arr = array.slice();
+        var i;
+        var j;
+        var temp;
+
+        for (i = arr.length - 1; i > 0; i--) {
+          j = Math.floor(Math.random() * (i + 1));
+          temp = arr[i];
+          arr[i] = arr[j];
+          arr[j] = temp;
+        }
+
+        return arr;
+      }
+
+      function choice(array) {
+        return array[Math.floor(Math.random() * array.length)];
+      }
+
+      function svgDataUrl(item) {
+        var svg =
+          '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 900">' +
+            '<defs>' +
+              '<filter id="symbolShadow" x="-30%" y="-30%" width="160%" height="160%">' +
+                '<feDropShadow dx="0" dy="18" stdDeviation="16" flood-color="rgba(0,0,0,0.30)"/>' +
+              '</filter>' +
+              '<radialGradient id="softWhite" cx="50%" cy="35%" r="75%">' +
+                '<stop offset="0%" stop-color="#ffffff"/>' +
+                '<stop offset="100%" stop-color="#f8fafc"/>' +
+              '</radialGradient>' +
+            '</defs>' +
+            '<rect width="900" height="900" fill="url(#softWhite)"/>' +
+            '<text x="450" y="455" text-anchor="middle" dominant-baseline="middle" font-size="470" filter="url(#symbolShadow)">' +
+              escapeHtml(item.emoji) +
+            '</text>' +
+          '</svg>';
+
+        return "data:image/svg+xml;charset=UTF-8," + encodeURIComponent(svg);
+      }
+
+      function stopSpeech() {
+        if ("speechSynthesis" in window) {
+          window.speechSynthesis.cancel();
+        }
+      }
+
+      function initAudio() {
+        var AudioContextClass;
+
+        if (!audioCtx) {
+          AudioContextClass = window.AudioContext || window.webkitAudioContext;
+          if (AudioContextClass) {
+            audioCtx = new AudioContextClass();
+          }
+        }
+
+        if (audioCtx && audioCtx.state === "suspended") {
+          audioCtx.resume();
+        }
+      }
+
+      function playTone(freq, start, duration, type, gainValue) {
+        var osc;
+        var gain;
+        var now;
+
+        if (muted || !audioCtx) return;
+
+        type = type || "sine";
+        gainValue = gainValue || 0.08;
+        now = audioCtx.currentTime;
+
+        osc = audioCtx.createOscillator();
+        gain = audioCtx.createGain();
+
+        osc.type = type;
+        osc.frequency.setValueAtTime(freq, now + start);
+
+        gain.gain.setValueAtTime(0.0001, now + start);
+        gain.gain.exponentialRampToValueAtTime(gainValue, now + start + 0.02);
+        gain.gain.exponentialRampToValueAtTime(0.0001, now + start + duration);
+
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+
+        osc.start(now + start);
+        osc.stop(now + start + duration + 0.05);
+      }
+
+      function playClickSound() {
+        if (muted) return;
+        initAudio();
+        playTone(520, 0, 0.06, "triangle", 0.045);
+      }
+
+      function playSuccessSound() {
+        if (muted) return;
+        initAudio();
+        playTone(523.25, 0, 0.18, "sine", 0.075);
+        playTone(659.25, 0.06, 0.2, "sine", 0.075);
+        playTone(783.99, 0.12, 0.28, "sine", 0.08);
+      }
+
+      function playErrorSound() {
+        if (muted) return;
+        initAudio();
+        playTone(220, 0, 0.16, "sine", 0.055);
+        playTone(174.61, 0.12, 0.22, "sine", 0.045);
+      }
+
+      function loadVoices() {
+        var voices;
+        var germanVoices;
+        var maleHints;
+        var i;
+        var j;
+        var voiceName;
+
+        if (!("speechSynthesis" in window)) return;
+
+        voices = window.speechSynthesis.getVoices();
+        germanVoices = [];
+        maleHints = [
+          "stefan",
+          "markus",
+          "yannick",
+          "daniel",
+          "michael",
+          "thomas",
+          "alex"
+        ];
+
+        for (i = 0; i < voices.length; i++) {
+          if (voices[i].lang && voices[i].lang.toLowerCase().indexOf("de") === 0) {
+            germanVoices.push(voices[i]);
+          }
+        }
+
+        selectedVoice = null;
+
+        for (i = 0; i < germanVoices.length; i++) {
+          voiceName = germanVoices[i].name.toLowerCase();
+
+          for (j = 0; j < maleHints.length; j++) {
+            if (voiceName.indexOf(maleHints[j]) !== -1) {
+              selectedVoice = germanVoices[i];
+              return;
+            }
+          }
+        }
+
+        selectedVoice = germanVoices[0] || null;
+      }
+
+      function speak(text) {
+        var utterance;
+
+        if (muted) return;
+        if (!("speechSynthesis" in window)) return;
+
+        stopSpeech();
+
+        utterance = new SpeechSynthesisUtterance(text);
+        utterance.lang = "de-DE";
+        utterance.rate = 0.65;
+        utterance.pitch = 0.9;
+        utterance.volume = 1;
+
+        if (selectedVoice) {
+          utterance.voice = selectedVoice;
+        }
+
+        window.speechSynthesis.speak(utterance);
+      }
+
+      function createRound() {
+        var round = [];
+        var lastId = null;
+        var possible;
+        var selected;
+        var i;
+
+        while (round.length < TOTAL_TASKS) {
+          possible = [];
+
+          for (i = 0; i < categories.length; i++) {
+            if (categories[i].id !== lastId) {
+              possible.push(categories[i]);
+            }
+          }
+
+          selected = choice(possible);
+          round.push(selected);
+          lastId = selected.id;
+        }
+
+        return round;
+      }
+
+      function createCardsForTask(targetCategory) {
+        var correctItem = choice(targetCategory.items);
+        var others = [];
+        var distractorCategories;
+        var cards;
+        var i;
+        var cat;
+
+        for (i = 0; i < categories.length; i++) {
+          if (categories[i].id !== targetCategory.id) {
+            others.push(categories[i]);
+          }
+        }
+
+        distractorCategories = shuffle(others).slice(0, 2);
+
+        cards = [
+          {
+            categoryId: targetCategory.id,
+            correct: true,
+            item: correctItem
+          }
+        ];
+
+        for (i = 0; i < distractorCategories.length; i++) {
+          cat = distractorCategories[i];
+
+          cards.push({
+            categoryId: cat.id,
+            correct: false,
+            item: choice(cat.items)
+          });
+        }
+
+        return shuffle(cards);
+      }
+
+      function renderStart() {
+        stopSpeech();
+        clearTimeout(advanceTimer);
+
+        app.innerHTML =
+          '<main class="center-screen app-bg">' +
+            '<section class="panel">' +
+              '<div class="big-icon">🌈</div>' +
+              '<h1>Kategorien zuordnen</h1>' +
+              '<p class="subtitle">Hör gut zu und tippe auf das passende Bild.</p>' +
+              '<button id="startBtn" class="primary-btn" type="button">▶️ Spiel starten</button>' +
+            '</section>' +
+          '</main>';
+
+        document.getElementById("startBtn").onclick = function () {
+          stopSpeech();
+          playClickSound();
+          startGame();
+        };
+      }
+
+      function renderHeader() {
+        return '' +
+          '<header class="header">' +
+            '<button id="homeBtn" class="round-btn" type="button" aria-label="Startbildschirm">🏠</button>' +
+            '<div class="progress">Aufgabe ' + (currentIndex + 1) + ' von ' + TOTAL_TASKS + '</div>' +
+            '<button id="muteBtn" class="round-btn" type="button" aria-label="Ton an oder aus">' + (muted ? "🔇" : "🔊") + '</button>' +
+          '</header>';
+      }
+
+      function renderGame() {
+        var task;
+        var html;
+        var i;
+        var card;
+
+        clearTimeout(advanceTimer);
+
+        task = currentRound[currentIndex];
+        currentCards = createCardsForTask(task);
+
+        html =
+          '<main class="game-screen">' +
+            renderHeader() +
+            '<section class="game-content">' +
+              '<div class="question-row">' +
+                '<h1 class="question">' + escapeHtml(task.prompt) + '</h1>' +
+                '<button id="readBtn" class="read-btn" type="button" aria-label="Aufgabe vorlesen">🔈</button>' +
+              '</div>' +
+              '<div class="cards-grid">';
+
+        for (i = 0; i < currentCards.length; i++) {
+          card = currentCards[i];
+
+          html +=
+            '<button class="game-card" type="button" data-index="' + i + '" aria-label="' + escapeHtml(card.item.name) + '">' +
+              '<img class="card-img" draggable="false" src="' + svgDataUrl(card.item) + '" alt="' + escapeHtml(card.item.name) + '">' +
+            '</button>';
+        }
+
+        html +=
+              '</div>' +
+            '</section>' +
+            '<div id="modalRoot"></div>' +
+          '</main>';
+
+        app.innerHTML = html;
+
+        document.getElementById("homeBtn").onclick = function () {
+          stopSpeech();
+          playClickSound();
+          showHomeModal();
+        };
+
+        document.getElementById("muteBtn").onclick = function () {
+          /*
+            Wichtig:
+            Mute/Unmute bleibt vollkommen stumm.
+            Kein Klicksound, keine Sprachausgabe.
+          */
+          stopSpeech();
+          muted = !muted;
+          document.getElementById("muteBtn").innerHTML = muted ? "🔇" : "🔊";
+        };
+
+        document.getElementById("readBtn").onclick = function () {
+          stopSpeech();
+          playClickSound();
+          speak(task.speak);
+        };
+
+        attachCardEvents();
+
+        setTimeout(function () {
+          speak(task.speak);
+        }, 350);
+      }
+
+      function attachCardEvents() {
+        var buttons = document.querySelectorAll(".game-card");
+        var i;
+
+        for (i = 0; i < buttons.length; i++) {
+          buttons[i].onclick = function () {
+            stopSpeech();
+            handleCardClick(this);
+          };
+        }
+      }
+
+      function handleCardClick(button) {
+        var index;
+        var card;
+
+        initAudio();
+        playClickSound();
+
+        clearTimeout(advanceTimer);
+
+        index = Number(button.getAttribute("data-index"));
+        card = currentCards[index];
+
+        if (!card) return;
+
+        if (card.correct) {
+          button.className = button.className.replace(/\bwrong-card\b/g, "");
+
+          if (button.className.indexOf("correct-card") === -1) {
+            button.className += " correct-card";
+          }
+
+          playSuccessSound();
+          launchConfetti(button);
+          speak("Richtig! Toll gemacht!");
+
+          advanceTimer = setTimeout(function () {
+            currentIndex++;
+
+            if (currentIndex >= TOTAL_TASKS) {
+              renderEnd();
+            } else {
+              renderGame();
+            }
+          }, 1300);
+        } else {
+          button.className = button.className.replace(/\bwrong-card\b/g, "");
+          void button.offsetWidth;
+          button.className += " wrong-card";
+
+          playErrorSound();
+          speak("Versuche es noch einmal!");
+
+          setTimeout(function () {
+            button.className = button.className.replace(/\bwrong-card\b/g, "");
+          }, 800);
+        }
+      }
+
+      function launchConfetti(button) {
+        var rect;
+        var x;
+        var y;
+
+        if (typeof window.confetti !== "function") return;
+
+        rect = button.getBoundingClientRect();
+        x = (rect.left + rect.width / 2) / window.innerWidth;
+        y = (rect.top + rect.height / 2) / window.innerHeight;
+
+        window.confetti({
+          particleCount: 90,
+          spread: 70,
+          startVelocity: 38,
+          origin: { x: x, y: y },
+          scalar: 1.1,
+          ticks: 180
+        });
+
+        setTimeout(function () {
+          window.confetti({
+            particleCount: 55,
+            spread: 95,
+            startVelocity: 28,
+            origin: { x: 0.5, y: 0.25 },
+            scalar: 0.9,
+            ticks: 150
+          });
+        }, 150);
+      }
+
+      function showHomeModal() {
+        var modalRoot = document.getElementById("modalRoot");
+
+        if (!modalRoot) return;
+
+        modalRoot.innerHTML =
+          '<div class="modal-backdrop">' +
+            '<section class="modal">' +
+              '<div class="big-icon">🏠</div>' +
+              '<h2>Zum Startbildschirm?</h2>' +
+              '<p>Dein aktuelles Spiel wird beendet.</p>' +
+              '<div class="modal-buttons">' +
+                '<button id="continueBtn" class="modal-button continue" type="button">Weiterspielen</button>' +
+                '<button id="confirmHomeBtn" class="modal-button confirm" type="button">Ja, zurück</button>' +
+              '</div>' +
+            '</section>' +
+          '</div>';
+
+        document.getElementById("continueBtn").onclick = function () {
+          stopSpeech();
+          playClickSound();
+          modalRoot.innerHTML = "";
+        };
+
+        document.getElementById("confirmHomeBtn").onclick = function () {
+          stopSpeech();
+          playClickSound();
+          renderStart();
+        };
+      }
+
+      function renderEnd() {
+        stopSpeech();
+        clearTimeout(advanceTimer);
+
+        app.innerHTML =
+          '<main class="center-screen app-bg">' +
+            '<section class="panel end">' +
+              '<div class="big-icon">🎉</div>' +
+              '<h1>Super gemacht!</h1>' +
+              '<p class="subtitle">Du hast alle Aufgaben geschafft.</p>' +
+              '<div class="end-buttons">' +
+                '<button id="againBtn" class="primary-btn" type="button">🔄 Nochmal spielen</button>' +
+                '<button id="endHomeBtn" class="secondary-btn" type="button">🏠 Startbildschirm</button>' +
+              '</div>' +
+            '</section>' +
+          '</main>';
+
+        document.getElementById("againBtn").onclick = function () {
+          stopSpeech();
+          playClickSound();
+          startGame();
+        };
+
+        document.getElementById("endHomeBtn").onclick = function () {
+          stopSpeech();
+          playClickSound();
+          renderStart();
+        };
+
+        setTimeout(function () {
+          speak("Super gemacht! Du hast alle Aufgaben geschafft.");
+        }, 250);
+      }
+
+      function startGame() {
+        initAudio();
+        currentRound = createRound();
+        currentIndex = 0;
+        renderGame();
+      }
+
+      function preventZoomAndScroll() {
+        document.addEventListener("gesturestart", function (event) {
+          event.preventDefault();
+        });
+
+        document.addEventListener("touchmove", function (event) {
+          if (event.scale && event.scale !== 1) {
+            event.preventDefault();
+          }
+        }, { passive: false });
+
+        document.addEventListener("dblclick", function (event) {
+          event.preventDefault();
+        }, { passive: false });
+      }
+
+      function init() {
+        try {
+          if ("speechSynthesis" in window) {
+            loadVoices();
+            window.speechSynthesis.onvoiceschanged = loadVoices;
+          }
+
+          preventZoomAndScroll();
+          renderStart();
+        } catch (error) {
+          app.innerHTML =
+            '<div class="center-screen">' +
+              '<div class="panel">' +
+                '<h1>Das Spiel konnte nicht starten.</h1>' +
+                '<p class="subtitle">Bitte lade die Seite neu.</p>' +
+              '</div>' +
+            '</div>';
+
+          console.error(error);
+        }
+      }
+
+      if (document.readyState === "loading") {
+        document.addEventListener("DOMContentLoaded", init);
+      } else {
+        init();
+      }
+    }());
+  </script>
+</body>
+</html>
